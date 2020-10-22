@@ -7,6 +7,11 @@
 #include <iomanip>
 #include <cstdlib>
 
+#include "boost/asio.hpp"
+#include "serial_device.h"
+
+using namespace boost;
+
 #ifdef __linux__
     const std::basic_string<char> configFilePath = "~/.temparatureSensor.cfg";
 #elif _WIN32
@@ -53,14 +58,19 @@ int main(int argc, char** argv)
 
     std::thread updateDataThread([&](){
         for(auto e : sensorConfig) {
-#ifdef __linux__
+            asio::io_service io;
+            asio::serial_port port(io);
 
-#elif _WIN32
-    
-#endif            
+            port.open(e.first);
+            port.set_option(asio::serial_port::baud_rate(115200));
+
+            std::string response;
+
+            serial_device serialDevice(port);
+            iostreams::stream<serial_device> serial;
+
+            serial >> response;
         }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     });
 
     return 0;
