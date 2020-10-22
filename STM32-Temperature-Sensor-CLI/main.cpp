@@ -5,11 +5,12 @@
 #include <string>
 #include <chrono>
 #include <iomanip>
+#include <cstdlib>
 
 #ifdef __linux__
     const std::basic_string<char> configFilePath = "~/.temparatureSensor.cfg";
 #elif _WIN32
-    const std::basic_string<char> configFilePath;
+    const std::basic_string<char> configFilePath = std::string(getenv("APPDATA")) + "\\Temperature-Sensor-CLI\\temparatureSensor.cfg";
 #endif
 
 // key -> name
@@ -51,13 +52,13 @@ int main(int argc, char** argv)
     });
 
     std::thread updateDataThread([&](){
-#ifdef __linux__
         for(auto e : sensorConfig) {
-            
-        }
-#elif _WIN32
+#ifdef __linux__
 
-#endif
+#elif _WIN32
+    
+#endif            
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     });
